@@ -5,7 +5,6 @@ const PassengerSchema = mongoose.Schema({
     title: { type: String, required: false },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    nationality: { type: String, required: false, default: "Indian" },
 });
 
 const hotelbooking = new Schema({
