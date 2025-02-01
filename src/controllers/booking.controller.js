@@ -1,4 +1,5 @@
 import { bookings } from "../models/booking.model.js";
+import { hotelBooking } from "../models/hotelbooking.model.js";
 
 const getBookingData = async(req,res)=>{
     try {
@@ -21,6 +22,23 @@ const getBookingDataById = async(req,res)=>{
     try{   
         const {id} = req.params;
         const order = await bookings.findOne({ transactionId: id });;
+
+        if(!order){
+            res.status(404).json({message: "Ticket not found"});
+        }else{
+            res.status(200).json(order);
+        }
+
+    }catch(error){
+        res.status(500).json({ message: 'An error occurred while fetching ticket.' });
+    }
+}
+
+const getHotelBookingDataById = async(req,res)=>{
+    
+    try{   
+        const {id} = req.params;
+        const order = await hotelBooking.findOne({ transactionId: id });;
 
         if(!order){
             res.status(404).json({message: "Ticket not found"});
@@ -77,4 +95,4 @@ const updateBookingData = async (req, res) => {
 };
 
 
-export { getBookingData, updateBookingData, getBookingDataById };   
+export { getBookingData, updateBookingData, getBookingDataById, getHotelBookingDataById };   

@@ -171,7 +171,7 @@ const hotelpaymentSuccess = async (req, res) => {
         { status: 'paid' }
       );
       // res.status(200).json({data:"Payment Successfull"});
-      res.redirect(`http://localhost:3000/success/${req.body.txnid}`); //Chnage url to frontend
+      res.redirect(`http://localhost:3000/hotelpaymentsuccess/${req.body.txnid}`); //Chnage url to frontend
 
     } else if (!order) {
       res.status(404).send({
