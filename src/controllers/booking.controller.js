@@ -16,6 +16,23 @@ const getBookingData = async(req,res)=>{
       }
 };
 
+const getBookingDataById = async(req,res)=>{
+    
+    try{   
+        const {id} = req.params;
+        const order = await bookings.findOne({ transactionId: id });;
+
+        if(!order){
+            res.status(404).json({message: "Ticket not found"});
+        }else{
+            res.status(200).json(order);
+        }
+
+    }catch(error){
+        res.status(500).json({ message: 'An error occurred while fetching ticket.' });
+    }
+}
+
 const updateBookingData = async (req, res) => {
     const { id } = req.params; // Booking ID from URL parameter
     const { passengerDetails, pnr } = req.body; // Destructure passengerDetails and pnr from request body
@@ -60,4 +77,4 @@ const updateBookingData = async (req, res) => {
 };
 
 
-export { getBookingData, updateBookingData };   
+export { getBookingData, updateBookingData, getBookingDataById };   
