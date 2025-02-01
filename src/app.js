@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import booking from "./routes/booking.routes.js";
 import payment from "./routes/payment.routes.js";
+import user from  "./routes/user.routes.js";
+
 // import cookieParser from "cookie-parser";
 dotenv.config({
     path: "./.env"
@@ -27,5 +29,6 @@ app.use(express.static("public"));
 //Routes
 app.use("/api/v1/booking",booking);
 app.use("/api/v1/initiatePayment",payment);
+app.use("/api/v1/user",user);
 
 export default app;
