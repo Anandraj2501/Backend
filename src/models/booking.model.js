@@ -25,7 +25,11 @@ const bookingSchema = mongoose.Schema(
         lastname: { type: String },
         pnr:{type:String,required:false},
         passengers: [PassengerSchema],
-        travellingDetails: TravellingDetailsSchema
+        travellingDetails: TravellingDetailsSchema,
+        referenceId:{
+            type: String,
+            required: false
+        }
     },
     { timestamps: true }
 );
