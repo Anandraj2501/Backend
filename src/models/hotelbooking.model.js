@@ -35,6 +35,10 @@ const hotelbooking = new Schema({
         type: String,
         required: true
     },
+    referenceId:{
+        type: String,
+        required: false
+    },
     contactDetails: {
         phone: {
             type: Number,

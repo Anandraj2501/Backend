@@ -1,6 +1,7 @@
 import { bookings } from "../models/booking.model.js";
 import jsSHA from "jssha";
 import { hotelBooking } from "../models/hotelbooking.model.js";
+import { v4 as uuidv4 } from 'uuid';
 
 const initiatePayment = async (req, res) => {
   try {
@@ -101,7 +102,7 @@ const initiateHotelPayment = async (req, res) => {
         transactionId: pd.txnid,
         city: req.body.city,
         checkinDate: req.body.checkinDate,
-        checkoutDate:req.body.checkoutDate,
+        checkoutDate: req.body.checkoutDate,
         travellers: req.body.travellers,
         purpose: req.body.purpose,
         status: "Pending",
@@ -123,7 +124,40 @@ const initiateHotelPayment = async (req, res) => {
 }
 
 
+const hotelpaymentSuccess = async (req, res) => {
+  try {
+    // Find the order by txnid
+    const order = await hotelBooking.findOne({ transactionId: req.body.txnid });
 
+    if (order) {
+      // Generate a unique reference ID (UUID or timestamp-based)
+      const referenceId = uuidv4(); // Alternative: Date.now().toString()
+
+      // Update the order with status 'paid' and the generated referenceId
+      await hotelBooking.findOneAndUpdate(
+        { transactionId: req.body.txnid },
+        {
+          status: 'paid',
+          referenceId: referenceId
+        }
+      );
+
+      console.log(`Payment successful for txnid: ${req.body.txnid}, Reference ID: ${referenceId}`);
+
+      // Redirect to frontend with the transaction ID
+      res.redirect(`http://localhost:3000/hotelpaymentsuccess/${req.body.txnid}`);
+
+    } else {
+      res.status(404).send({
+        status: 'failure',
+        message: `Order with transaction ID: ${req.body.txnid} not found.`,
+      });
+    }
+  } catch (err) {
+    console.error("Error processing payment success:", err);
+    res.status(500).send('An error occurred while processing the payment');
+  }
+};
 
 
 
@@ -134,9 +168,15 @@ const paymentSuccess = async (req, res) => {
     console.log()
     // If the order exists and the payment status is 'success', update the status to 'paid'
     if (order) {
+      // Generate a unique reference ID (UUID or timestamp-based)
+      const referenceId = uuidv4(); // Alternative: Date.now().toString()
+      
       await bookings.findOneAndUpdate(
         { transactionId: req.body.txnid },
-        { status: 'paid' }
+        {
+          status: 'paid',
+          referenceId: referenceId
+        }
       );
       // res.status(200).json({data:"Payment Successfull"});
       res.redirect(`http://localhost:3000/success/${req.body.txnid}`); //Chnage url to frontend
@@ -159,37 +199,6 @@ const paymentSuccess = async (req, res) => {
   }
 }
 
-const hotelpaymentSuccess = async (req, res) => {
-  try {
-    // Find the order by txnid
-    const order = await hotelBooking.findOne({ transactionId: req.body.txnid });
-    console.log()
-    // If the order exists and the payment status is 'success', update the status to 'paid'
-    if (order) {
-      await hotelBooking.findOneAndUpdate(
-        { transactionId: req.body.txnid },
-        { status: 'paid' }
-      );
-      // res.status(200).json({data:"Payment Successfull"});
-      res.redirect(`http://localhost:3000/hotelpaymentsuccess/${req.body.txnid}`); //Chnage url to frontend
-
-    } else if (!order) {
-      res.status(404).send({
-        status: 'failure',
-        message: `Order with transaction ID: ${req.body.txnid} not found.`,
-      });
-    } else {
-      res.status(400).send({
-        status: 'failure',
-        message: 'Payment was not successful. Please try again.',
-      });
-    }
-  } catch (err) {
-    console.log(err);
-    res.status(500).send('An error occurred while processing the payment');
-
-  }
-}
 
 const paymentFailed = async (req, res) => {
   try {
@@ -295,13 +304,13 @@ const hotelpaymentFailed = async (req, res) => {
       //           <div class="container">
       //             <h1>Payment Failed</h1>
       //             <p>Your order has been failed. Below are the details:</p>
-                  
+
       //             <div class="order-details">
       //               <p><strong>Transaction ID:</strong> ${req.body.txnid}</p>
       //               <p><strong>Amount:</strong> ${req.body.amount}</p>
       //               <p><strong>Name:</strong> ${req.body.firstname} ${order.lastname}</p>
       //             </div>
-    
+
       //             <div class="thank-you">
       //               <p>Thank you for your purchase! You'll receive a confirmation email shortly.</p>
       //             </div>
