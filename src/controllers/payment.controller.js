@@ -131,7 +131,7 @@ const hotelpaymentSuccess = async (req, res) => {
 
     if (order) {
       // Generate a unique reference ID (UUID or timestamp-based)
-      const referenceId = uuidv4(); // Alternative: Date.now().toString()
+      const referenceId = uuidv4().split('-')[0]; // Alternative: Date.now().toString()
 
       // Update the order with status 'paid' and the generated referenceId
       await hotelBooking.findOneAndUpdate(
@@ -169,7 +169,7 @@ const paymentSuccess = async (req, res) => {
     // If the order exists and the payment status is 'success', update the status to 'paid'
     if (order) {
       // Generate a unique reference ID (UUID or timestamp-based)
-      const referenceId = uuidv4(); // Alternative: Date.now().toString()
+      const referenceId = uuidv4().split('-')[0]; // Alternative: Date.now().toString()
       
       await bookings.findOneAndUpdate(
         { transactionId: req.body.txnid },
