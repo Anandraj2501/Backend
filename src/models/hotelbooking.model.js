@@ -31,11 +31,11 @@ const hotelbooking = new Schema({
         type: String,
         required: true
     },
-    status:{
+    status: {
         type: String,
         required: true
     },
-    referenceId:{
+    referenceId: {
         type: String,
         required: false
     },
@@ -54,6 +54,8 @@ const hotelbooking = new Schema({
         }
     },
     passengers: [PassengerSchema]
-})
+},
+    { timestamps: true }
+)
 
 export const hotelBooking = mongoose.model("hotelBooking", hotelbooking);
