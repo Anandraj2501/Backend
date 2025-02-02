@@ -138,7 +138,7 @@ const hotelpaymentSuccess = async (req, res) => {
         { transactionId: req.body.txnid },
         {
           status: 'paid',
-          referenceId: referenceId
+          referenceId: referenceId 
         }
       );
 
