@@ -161,43 +161,56 @@ const hotelpaymentSuccess = async (req, res) => {
 
 
 
+const generatePNR = () => {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let pnr = "";
+  for (let i = 0; i < 6; i++) {
+      pnr += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return pnr;
+};
+
 const paymentSuccess = async (req, res) => {
   try {
-    // Find the order by txnid
-    const order = await bookings.findOne({ transactionId: req.body.txnid });
-    console.log()
-    // If the order exists and the payment status is 'success', update the status to 'paid'
-    if (order) {
-      // Generate a unique reference ID (UUID or timestamp-based)
-      const referenceId = uuidv4().split('-')[0]; // Alternative: Date.now().toString()
-      
-      await bookings.findOneAndUpdate(
-        { transactionId: req.body.txnid },
-        {
-          status: 'paid',
-          referenceId: referenceId
-        }
-      );
-      // res.status(200).json({data:"Payment Successfull"});
-      res.redirect(`http://localhost:3000/success/${req.body.txnid}`); //Chnage url to frontend
+      // Find the order by txnid
+      const order = await bookings.findOne({ transactionId: req.body.txnid });
 
-    } else if (!order) {
-      res.status(404).send({
-        status: 'failure',
-        message: `Order with transaction ID: ${req.body.txnid} not found.`,
-      });
-    } else {
-      res.status(400).send({
-        status: 'failure',
-        message: 'Payment was not successful. Please try again.',
-      });
-    }
+      if (order) {
+          // Generate a unique reference ID
+          const referenceId = uuidv4().split('-')[0];
+
+          // Generate a PNR and ensure uniqueness
+          let pnr;
+          let isUnique = false;
+
+          while (!isUnique) {
+              pnr = generatePNR();
+              const existingPNR = await bookings.findOne({ pnr: pnr });
+              if (!existingPNR) isUnique = true; // Ensure unique PNR
+          }
+
+          // Update the booking with status, reference ID, and PNR
+          await bookings.findOneAndUpdate(
+              { transactionId: req.body.txnid },
+              {
+                  status: "paid",
+                  referenceId: referenceId,
+                  pnr: pnr
+              }
+          );
+
+          res.redirect(`http://localhost:3000/success/${req.body.txnid}`); // Change URL to frontend
+      } else {
+          res.status(404).send({
+              status: "failure",
+              message: `Order with transaction ID: ${req.body.txnid} not found.`,
+          });
+      }
   } catch (err) {
-    console.log(err);
-    res.status(500).send('An error occurred while processing the payment');
-
+      console.log(err);
+      res.status(500).send("An error occurred while processing the payment");
   }
-}
+};
 
 
 const paymentFailed = async (req, res) => {

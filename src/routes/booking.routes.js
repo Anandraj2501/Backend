@@ -6,6 +6,7 @@ const router = Router();
 router.route("/").get(getBookingData);
 router.route("/getbookingdatabyid/:id").get(getBookingDataById);
 router.route("/gethotelbookingdatabyid/:id").get(getHotelBookingDataById);
-router.route("/updateBookingData/:id").put(updateBookingData);
+router.route("/updateBookingData/:bookingId/passenger/:passengerId").put(updateBookingData);
+
 
 export default router;
