@@ -23,6 +23,11 @@ const hotelbooking = new Schema({
         type: Date,
         required: true
     },
+    amount:
+    {
+        type: String,
+        required: true
+    },
     travellers: {
         type: Number,
         required: true

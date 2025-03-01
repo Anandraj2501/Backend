@@ -103,9 +103,10 @@ const initiateHotelPayment = async (req, res) => {
         city: req.body.city,
         checkinDate: req.body.checkinDate,
         checkoutDate: req.body.checkoutDate,
+        amount: 400,
         travellers: req.body.travellers,
         purpose: req.body.purpose,
-        status: "Pending",
+        status: "pending",
         contactDetails,
         passengers
       })
