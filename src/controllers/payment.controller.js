@@ -4,6 +4,7 @@ import { hotelBooking } from "../models/hotelbooking.model.js";
 import { v4 as uuidv4 } from 'uuid';
 
 const initiatePayment = async (req, res) => {
+  console.log(req.body.udf3);
   try {
     if (
       !req.body.txnid ||
@@ -18,7 +19,7 @@ const initiatePayment = async (req, res) => {
     } else {
       var pd = req.body;
       var hashString =
-        process.env.PAYMENT_KEY + // live or test key
+        process.env.PAYMENT_KEY + // live or test key 
         '|' +
         pd.txnid +
         '|' +
@@ -52,6 +53,7 @@ const initiatePayment = async (req, res) => {
         email: pd.email,
         passengers: JSON.parse(pd.udf1), // Parse passengers from JSON string
         travellingDetails: JSON.parse(pd.udf2), // Parse travellingDetails from JSON string
+        flightDetails: JSON.parse(pd.udf3),
       });
 
       await newOrder.save();
