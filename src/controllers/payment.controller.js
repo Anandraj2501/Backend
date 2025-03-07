@@ -19,7 +19,7 @@ const initiatePayment = async (req, res) => {
     } else {
       var pd = req.body;
       var hashString =
-        process.env.PAYMENT_KEY + // live or test key
+        process.env.PAYMENT_KEY + // live or test key 
         '|' +
         pd.txnid +
         '|' +
